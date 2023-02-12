@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "tuaa-mobile-app",
+    "slug": "tuaa-mobile-app",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
