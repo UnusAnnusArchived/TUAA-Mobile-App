@@ -1,10 +1,16 @@
 {
   "expo": {
-    "name": "tuaa-mobile-app",
-    "slug": "tuaa-mobile-app",
-    "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "name": "The Unus Annus Archive",
+    "slug": "TUAA",
+    "version": "1.0.1",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "us.unusann.TUAA-Mobile-App"
+    },
+    "android": {
+      "package": "us.unusann.tuaa_mobile_app"
+    }
   }
 }
