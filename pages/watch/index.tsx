@@ -6,7 +6,7 @@ import { ActivityIndicator, Button, Text } from "react-native-paper";
 import Layout from "../../components/layout";
 import VideoComments from "../../components/video-comments";
 import VideoInfo from "../../components/video-info";
-import { IEpisode, IPageInfo } from "../../types";
+import { IEpisode, IPageInfo } from "../../src/types";
 
 const Watch: React.FC<any> = ({ navigation }) => {
   const [episode, setEpisode] = useState<IEpisode>();
@@ -40,7 +40,7 @@ const Watch: React.FC<any> = ({ navigation }) => {
         <ScrollView contentContainerStyle={{ margin: 16 }}>
           <View style={{ marginBottom: 32 }}>
             {/* Future video player */}
-            <View style={{ aspectRatio: 16 / 9, backgroundColor: "#000000" }}></View>
+            <View style={{ aspectRatio: 16 / 9, backgroundColor: "#000000" }} accessibilityIgnoresInvertColors></View>
 
             <VideoInfo episode={episode} />
             <VideoComments episode={episode} />

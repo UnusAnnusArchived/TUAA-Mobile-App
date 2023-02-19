@@ -1,6 +1,6 @@
 import { Animated, StyleProp, View, ViewStyle } from "react-native";
 import { Appbar, Surface, Text, useTheme } from "react-native-paper";
-import { IPageAction } from "../../types";
+import { IPageAction } from "../../src/types";
 
 interface IProps extends React.PropsWithChildren {
   backButton?: boolean;

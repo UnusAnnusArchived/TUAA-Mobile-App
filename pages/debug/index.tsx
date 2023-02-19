@@ -1,14 +1,87 @@
-import { Text } from "react-native-paper";
+import { ScrollView } from "react-native";
+import { Divider, Surface, Text } from "react-native-paper";
+import Comment from "../../components/comment";
 import Layout from "../../components/layout";
-import useDeviceType from "../../tools/useDeviceType";
-import type { IPageInfo } from "../../types";
+import useDeviceType from "../../src/tools/useDeviceType";
+import type { IComment, IPageInfo } from "../../src/types";
+
+const markdownTestComment: IComment = {
+  collectionId: "c374lpcmdsvqwim",
+  collectionName: "comments",
+  created: "0",
+  episode: "s01.e001",
+  id: "0",
+  isEdited: true,
+  markdown: `Markdown test comment:
+
+Table:
+| This | Is | A | Table |
+|---|---|---|---|
+| a | a | a | a |
+
+\`\`\`
+code block
+\`\`\`
+
+> Block quote
+
+hr:
+***
+
+1. This
+2. is
+3. a
+4. List
+
+* This
+* is
+* a
+* list
+
+# This is a heading 1
+## This is a heading 2
+### This is a heading 3
+
+Linkify:
+https://unusann.us
+
+\\*\\*this text is in escaped bold\\*\\*
+
+\`this text is in backticks\`
+
+~~this text is stricken through~~
+
+**this text is emphasized**
+
+[this is a link](https://unusann.us)
+
+Image:
+![Unus Annus Logo](https://unusann.us/ua.png)
+
+<span>inline html</span>
+
+this&nbsp;is&nbsp;separated&nbsp;by&nbsp;html&nbsp;entities`,
+  updated: "0",
+  user: "n2xipyc8w6m9rbs",
+};
 
 const Profile: React.FC = () => {
   const deviceType = useDeviceType();
 
   return (
     <Layout title={pageInfo.title}>
-      <Text>Device Type: {deviceType}</Text>
+      <ScrollView>
+        <Text>Device Type: {deviceType}</Text>
+        <Surface style={{ margin: 16, padding: 16 }}>
+          <Comment
+            comment={markdownTestComment}
+            mutate={async () => {
+              return undefined;
+            }}
+          />
+          <Divider />
+        </Surface>
+      </ScrollView>
     </Layout>
   );
 };

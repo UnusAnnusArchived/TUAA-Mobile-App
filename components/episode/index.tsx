@@ -1,11 +1,11 @@
 import { Card, Text, useTheme } from "react-native-paper";
-import { cdn } from "../../endpoints";
-import { IEpisode } from "../../types";
+import { cdn } from "../../src/endpoints";
+import { IEpisode } from "../../src/types";
 import moment from "moment-with-locales-es6";
 import React from "react";
 import { Image, useWindowDimensions, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import useDeviceType from "../../tools/useDeviceType";
+import useDeviceType from "../../src/tools/useDeviceType";
 import { DeviceType } from "expo-device";
 
 interface IProps {
@@ -34,6 +34,7 @@ const Episode: React.FC<IProps> = ({ episode, navigation }) => {
           alt={`Thumbnail for episode ${episode.episode}`}
           style={{ backgroundColor: theme.colors.elevation.level2 }}
           source={{ uri: `${cdn}${episode?.posters?.[1]?.src ?? episode?.thumbnail}`, width: 1280, height: 1280 }}
+          accessibilityIgnoresInvertColors
         />
         <Card.Content style={{ marginTop: 16 }}>
           <Text variant="titleMedium">{episode.title}</Text>

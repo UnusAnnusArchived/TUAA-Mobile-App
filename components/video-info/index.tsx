@@ -2,7 +2,7 @@ import moment from "moment";
 import { useWindowDimensions } from "react-native";
 import { Divider, Surface, Text, useTheme } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
-import type { IEpisode } from "../../types";
+import type { IEpisode } from "../../src/types";
 
 interface IProps {
   episode: IEpisode;

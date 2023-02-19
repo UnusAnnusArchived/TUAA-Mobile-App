@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Surface, Text, useTheme } from "react-native-paper";
-import { IComment, IEpisode, ISortType } from "../../types";
-import pb from "../../pocketbase";
+import { IComment, IEpisode, ISortType } from "../../src/types";
+import pb from "../../src/pocketbase";
 import Comment from "../comment";
 import useSWR from "swr";
 import moment from "moment-with-locales-es6";
@@ -14,6 +14,7 @@ interface IProps {
 
 const VideoComments: React.FC<IProps> = ({ episode }) => {
   const [sortType, setSortType] = useState<ISortType>("latest");
+  const theme = useTheme();
 
   const fetcher = async (sortType: ISortType) => {
     const comments = await pb.collection("comments").getFullList<IComment>(undefined, {
@@ -38,6 +39,8 @@ const VideoComments: React.FC<IProps> = ({ episode }) => {
     if (sortType === "oldest") {
       comments.reverse();
     }
+
+    console.log(comments);
 
     return comments;
   };
@@ -68,6 +71,9 @@ const VideoComments: React.FC<IProps> = ({ episode }) => {
             { label: "Newest", value: "latest" },
             { label: "Oldest", value: "oldest" },
           ]}
+          dropDownItemTextStyle={{ color: theme.colors.onBackground }}
+          dropDownItemSelectedTextStyle={{ color: theme.colors.onBackground }}
+          dropDownItemSelectedStyle={{ backgroundColor: theme.colors.elevation.level5 }}
         />
       </View>
       {data && data.length > 0 ? (

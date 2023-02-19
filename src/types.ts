@@ -1,4 +1,4 @@
-import { Record } from "pocketbase";
+import { Admin, Record } from "pocketbase";
 import { Animated, StyleProp, ViewStyle } from "react-native";
 import { IconSource } from "react-native-paper/lib/typescript/components/Icon";
 
@@ -73,3 +73,8 @@ export interface IUser extends Partial<Record> {
 }
 
 export type ISortType = "latest" | "oldest";
+
+export interface IUserAtom {
+  token: string | null;
+  model: Record | Admin | null;
+}

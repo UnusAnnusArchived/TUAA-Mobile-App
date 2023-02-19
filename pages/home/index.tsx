@@ -6,17 +6,19 @@ import { Text, useTheme } from "react-native-paper";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import Layout from "../../components/layout";
 import SeasonView from "../../components/season-view";
-import type { IPageInfo } from "../../types";
+import type { IPageInfo } from "../../src/types";
 import Watch from "../watch";
 
 const HomeNavigator: React.FC = () => {
   const Stack = createStackNavigator();
 
   return (
-    <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false, cardStyle: {} }}>
-      <Stack.Screen name="Videos" component={Home} />
-      <Stack.Screen name="Watch" component={Watch} />
-    </Stack.Navigator>
+    <NavigationContainer independent>
+      <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false, cardStyle: {} }}>
+        <Stack.Screen name="Videos" component={Home} />
+        <Stack.Screen name="Watch" component={Watch} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

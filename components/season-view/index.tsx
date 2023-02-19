@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { FlatList, ScrollView, View } from "react-native";
 import { ActivityIndicator, Button, Text } from "react-native-paper";
-import type { IEpisode } from "../../types";
+import type { IEpisode } from "../../src/types";
 import Episode from "../episode";
 import device, { DeviceType } from "expo-device";
-import useDeviceType from "../../tools/useDeviceType";
+import useDeviceType from "../../src/tools/useDeviceType";
 
 interface IProps {
   season: 0 | 1;
@@ -38,7 +38,7 @@ const SeasonView: React.FC<IProps> = ({ season, navigation }) => {
             alignItems: "stretch",
             padding: 8,
             flexWrap: deviceType !== DeviceType.PHONE ? "wrap" : undefined,
-            flexDirection: "row",
+            flexDirection: deviceType !== DeviceType.PHONE ? "row" : undefined,
           }}
         >
           {episodes.map((episode, index) => {
