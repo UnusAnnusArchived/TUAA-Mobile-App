@@ -1,14 +1,10 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { BottomNavigation, Provider as PaperProvider } from "react-native-paper";
+import { Provider as PaperProvider } from "react-native-paper";
 import theme from "../components/theme";
 import { useFonts } from "expo-font";
 import { RecoilRoot } from "recoil";
 import Router from "./Router";
-import { useEffect } from "react";
 import RecoilNexus from "./tools/nexus";
-import { ReactNativeRecoilPersist, ReactNativeRecoilPersistGate } from "react-native-recoil-persist";
-
-export const recoilPersist = new ReactNativeRecoilPersist();
+import ReactNativeRecoilPersist, { ReactNativeRecoilPersistGate } from "react-native-recoil-persist";
 
 const Main: React.FC = () => {
   const [fontsLoaded] = useFonts({
@@ -17,7 +13,7 @@ const Main: React.FC = () => {
 
   return (
     <RecoilRoot>
-      <ReactNativeRecoilPersistGate store={recoilPersist}>
+      <ReactNativeRecoilPersistGate store={ReactNativeRecoilPersist}>
         <RecoilNexus>
           <PaperProvider>
             <Router />

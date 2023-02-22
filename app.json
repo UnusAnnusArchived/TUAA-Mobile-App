@@ -5,6 +5,7 @@
     "version": "1.0.1",
     "userInterfaceStyle": "automatic",
     "assetBundlePatterns": ["**/*"],
+    "orientation": "portrait",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "us.unusann.TUAA-Mobile-App"

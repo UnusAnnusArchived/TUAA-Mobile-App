@@ -28,6 +28,7 @@ const RecoilNexus: React.FC<React.PropsWithChildren> = ({ children }) => {
     []
   );
 
+  //@ts-ignore idk why but types aren't working right
   nexus.set = useRecoilCallback(({ transact_UNSTABLE }) => {
     return function <T>(atom: RecoilState<T>, valOrUpdater: T | ((currVal: T) => T)) {
       transact_UNSTABLE(({ set }) => {
