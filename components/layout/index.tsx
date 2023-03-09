@@ -1,5 +1,6 @@
 import { Animated, StyleProp, View, ViewStyle } from "react-native";
 import { Appbar, Surface, Text, useTheme } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { IPageAction } from "../../src/types";
 
 interface IProps extends React.PropsWithChildren {

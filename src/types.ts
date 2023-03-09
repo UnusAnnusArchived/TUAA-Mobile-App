@@ -76,5 +76,5 @@ export type ISortType = "latest" | "oldest";
 
 export interface IUserAtom {
   token: string | null;
-  model: Record | Admin | null;
+  model: IUser | null;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { GestureResponderEvent, useWindowDimensions, View } from "react-native";
-import { Avatar, Divider, IconButton, Text, useTheme } from "react-native-paper";
+import { Divider, IconButton, Text, useTheme } from "react-native-paper";
 import { IComment, IUser } from "../../src/types";
 import pb from "../../src/pocketbase";
 import getPbImagePath from "../../src/tools/getPbImagePath";
@@ -12,6 +12,7 @@ import { KeyedMutator } from "swr";
 import CommentOptions from "./options";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../src/atoms";
+import Avatar from "../avatar";
 
 const md = MarkdownIt({ html: false, xhtmlOut: false, breaks: true, langPrefix: "", linkify: true })
   .disable(["image", "link", "table", "code", "fence", "hr", "html_block", "heading", "entity"])
@@ -59,13 +60,7 @@ const Comment: React.FC<IProps> = ({ comment }) => {
     <>
       <Divider />
       <View style={{ flexDirection: "row", marginVertical: 8 }}>
-        <View style={{ alignItems: "flex-start", marginHorizontal: 12 }} accessibilityIgnoresInvertColors>
-          {user && user.avatar ? (
-            <Avatar.Image size={48} source={{ uri: getPbImagePath(user.collectionId!, user.id!, user.avatar!) }} />
-          ) : (
-            <Avatar.Text size={48} label={user?.name?.substring?.(0, 1) ?? "..."} />
-          )}
-        </View>
+        <Avatar user={user} />
         <View style={{ width: dimensions.width - 137 - (showTools ? 40 : 0), overflow: "hidden" }}>
           <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 1, flexWrap: "wrap" }}>
             <Text variant="titleMedium" style={{ fontWeight: "bold" }}>

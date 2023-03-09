@@ -1,32 +1,42 @@
 import { useEffect, useState } from "react";
-import { FlatList, ScrollView, View } from "react-native";
+import { FlatList, ScrollView, View, RefreshControl } from "react-native";
 import { ActivityIndicator, Button, Text } from "react-native-paper";
 import type { IEpisode } from "../../src/types";
 import Episode from "../episode";
 import device, { DeviceType } from "expo-device";
 import useDeviceType from "../../src/tools/useDeviceType";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { ParamList } from "../../pages/home";
+import { api } from "../../src/endpoints";
 
 interface IProps {
   season: 0 | 1;
-  navigation: any;
+  navigation: StackNavigationProp<ParamList, "Videos">;
 }
 
 const SeasonView: React.FC<IProps> = ({ season, navigation }) => {
   const [episodes, setEpisodes] = useState<IEpisode[]>([]);
-  const [fetchError, setFetchError] = useState<Error | undefined>(undefined);
+  const [fetchError, setFetchError] = useState<Error>();
+  const [loading, setLoading] = useState(false);
   const deviceType = useDeviceType();
 
   useEffect(() => {
     fetchVideos();
   }, []);
 
-  const fetchVideos = () => {
-    setEpisodes([]);
-    setFetchError(undefined);
-    fetch("https://unusann.us/api/v2/metadata/all")
-      .then((res) => res.json())
-      .then((res) => setEpisodes(res[season]))
-      .catch(setFetchError);
+  const fetchVideos = async () => {
+    try {
+      setLoading(true);
+      setEpisodes([]);
+      setFetchError(undefined);
+      const res: IEpisode[] = await fetch(`${api}/v2/metadata/season/s${season.toString().padStart(2, "0")}`).then(
+        (res) => res.json()
+      );
+      setEpisodes(res);
+      setLoading(false);
+    } catch (err: any) {
+      setFetchError(err);
+    }
   };
 
   return (
@@ -40,6 +50,7 @@ const SeasonView: React.FC<IProps> = ({ season, navigation }) => {
             flexWrap: deviceType !== DeviceType.PHONE ? "wrap" : undefined,
             flexDirection: deviceType !== DeviceType.PHONE ? "row" : undefined,
           }}
+          refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchVideos} />}
         >
           {episodes.map((episode, index) => {
             return <Episode key={index} episode={episode} navigation={navigation} />;

@@ -7,10 +7,12 @@ import { Image, useWindowDimensions, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useDeviceType from "../../src/tools/useDeviceType";
 import { DeviceType } from "expo-device";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { ParamList } from "../../pages/home";
 
 interface IProps {
   episode: IEpisode;
-  navigation: any;
+  navigation: StackNavigationProp<ParamList, "Videos">;
 }
 
 const Episode: React.FC<IProps> = ({ episode, navigation }) => {
@@ -19,8 +21,7 @@ const Episode: React.FC<IProps> = ({ episode, navigation }) => {
   const dimensions = useWindowDimensions();
 
   const handlePress = async () => {
-    await AsyncStorage.setItem("selected-video", JSON.stringify(episode));
-    navigation.navigate("Watch");
+    navigation.navigate("Watch", { episode });
   };
 
   return (
@@ -29,11 +30,11 @@ const Episode: React.FC<IProps> = ({ episode, navigation }) => {
         width: deviceType !== DeviceType.PHONE ? (1 / 3) * dimensions.width - 16 : undefined,
       }}
     >
-      <Card style={{ margin: 8 }} onPress={handlePress}>
+      <Card style={{ margin: 8, width: dimensions.width - 32 }} onPress={handlePress}>
         <Card.Cover
           alt={`Thumbnail for episode ${episode.episode}`}
           style={{ backgroundColor: theme.colors.elevation.level2 }}
-          source={{ uri: `${cdn}${episode?.posters?.[1]?.src ?? episode?.thumbnail}`, width: 1280, height: 1280 }}
+          source={{ uri: `${cdn}${episode?.posters?.[0]?.src ?? episode?.thumbnail}`, width: 1280, height: 720 }}
           accessibilityIgnoresInvertColors
         />
         <Card.Content style={{ marginTop: 16 }}>

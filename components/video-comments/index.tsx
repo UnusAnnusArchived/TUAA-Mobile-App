@@ -40,8 +40,6 @@ const VideoComments: React.FC<IProps> = ({ episode }) => {
       comments.reverse();
     }
 
-    console.log(comments);
-
     return comments;
   };
 

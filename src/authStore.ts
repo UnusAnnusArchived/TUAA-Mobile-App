@@ -1,7 +1,7 @@
-import { Admin, BaseAuthStore, Record } from "pocketbase";
+import { BaseAuthStore, Record } from "pocketbase";
 import { RecoilState } from "recoil";
 import { getRecoil, resetRecoil, setRecoil } from "./tools/nexus";
-import { IUserAtom } from "./types";
+import { IUser, IUserAtom } from "./types";
 
 export default class RecoilAuthStore extends BaseAuthStore {
   userAtom: RecoilState<IUserAtom>;
@@ -20,26 +20,23 @@ export default class RecoilAuthStore extends BaseAuthStore {
   }
 
   /** @inheritdoc */
-  get model(): Record | Admin | null {
+  //@ts-ignore
+  get model(): IUser | null {
     const data = this._getUserAtom() || {};
-    console.log(data);
 
     if (data === null || typeof data !== "object" || data.model === null || typeof data.model !== "object") {
       return null;
     }
 
-    if (typeof data.model?.collectionId === "undefined") {
-      return new Admin(data.model);
-    }
-
-    return new Record(data.model);
+    return data.model;
   }
 
   /**  @inheritdoc */
-  save(token: string, model: Record | Admin | null) {
+  //@ts-ignore
+  save(token: string, model: IUser | null) {
     this._setUserAtom({ token, model });
 
-    super.save(token, model);
+    super.save(token, model as Record | null);
   }
 
   /** @inheritdoc */

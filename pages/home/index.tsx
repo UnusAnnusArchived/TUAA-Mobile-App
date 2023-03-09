@@ -1,21 +1,26 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { useRef, useState, useEffect, useMemo } from "react";
+import { createStackNavigator, StackScreenProps } from "@react-navigation/stack";
+import { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import { Animated, useWindowDimensions, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import Layout from "../../components/layout";
 import SeasonView from "../../components/season-view";
-import type { IPageInfo } from "../../src/types";
+import type { IEpisode, IPageInfo } from "../../src/types";
 import Watch from "../watch";
 
-const HomeNavigator: React.FC = () => {
-  const Stack = createStackNavigator();
+export type ParamList = {
+  Videos: undefined;
+  Watch: { episode?: IEpisode };
+};
 
+const Stack = createStackNavigator<ParamList>();
+
+const HomeNavigator: React.FC = () => {
   return (
     <NavigationContainer independent>
-      <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false, cardStyle: {} }}>
-        <Stack.Screen name="Videos" component={Home} />
+      <Stack.Navigator initialRouteName="Videos" screenOptions={{ headerShown: false, cardStyle: {} }}>
+        <Stack.Screen name="Videos" component={Videos} />
         <Stack.Screen name="Watch" component={Watch} />
       </Stack.Navigator>
     </NavigationContainer>
@@ -24,20 +29,23 @@ const HomeNavigator: React.FC = () => {
 
 export default HomeNavigator;
 
-const Home: React.FC<any> = ({ navigation }) => {
+const routes = [
+  { key: "s01", title: "Season 1" },
+  { key: "s00", title: "Specials" },
+];
+
+const Videos: React.FC<StackScreenProps<ParamList, "Videos">> = ({ navigation }) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const theme = useTheme();
 
-  const routes = [
-    { key: "s01", title: "Season 1" },
-    { key: "s00", title: "Specials" },
-  ];
-
-  const map = SceneMap({
-    s01: () => <SeasonView season={1} navigation={navigation} />,
-    s00: () => <SeasonView season={0} navigation={navigation} />,
-  });
+  const map = useCallback(
+    SceneMap({
+      s01: () => <SeasonView season={1} navigation={navigation} />,
+      s00: () => <SeasonView season={0} navigation={navigation} />,
+    }),
+    []
+  );
 
   return (
     <Layout title={pageInfo.title} headerStyles={{ elevation: 0 }}>
