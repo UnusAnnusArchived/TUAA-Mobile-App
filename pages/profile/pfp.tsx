@@ -34,7 +34,7 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
       await ImagePicker.getMediaLibraryPermissionsAsync(false);
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
+        allowsEditing: false,
         aspect: [1, 1],
         quality: 1,
         base64: false,
@@ -44,15 +44,46 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
       if (!result.canceled && result.assets[0].uri) {
         const data = new FormData();
 
-        console.log(result.assets[0].uri);
-        const req = await fetch(result.assets[0].uri);
+        data.append("avatar", {
+          uri: result.assets[0].uri,
+          type: "image/*",
+          name: result.assets[0].fileName ?? result.assets[0].uri.split("/").at(-1),
+        });
 
-        const blob = await req.blob();
+        await pb.collection("users").update<IUser>(currentUser?.model?.id ?? "", data);
+      }
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      setError(true);
+      console.error(err);
+    }
+  };
 
-        data.append("avatar", blob);
+  const handleTakePfp = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      await ImagePicker.getCameraPermissionsAsync();
+      let result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        aspect: [1, 1],
+        quality: 1,
+        base64: false,
+        exif: false,
+      });
 
-        console.log(await pb.collection("users").update<IUser>(currentUser?.model?.id ?? "", data));
-        console.log('Uploaded "successfully"');
+      if (!result.canceled && result.assets[0].uri) {
+        const data = new FormData();
+
+        data.append("avatar", {
+          uri: result.assets[0].uri,
+          type: "image/*",
+          name: result.assets[0].fileName ?? result.assets[0].uri.split("/").at(-1),
+        });
+
+        await pb.collection("users").update<IUser>(currentUser?.model?.id ?? "", data);
       }
       setLoading(false);
     } catch (err) {
@@ -82,6 +113,20 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
           style={{ marginTop: 8 }}
         >
           {loading ? <ActivityIndicator style={{ paddingTop: 5 }} /> : "Change Profile Picture"}
+        </Button>
+        <Button
+          contentStyle={{
+            backgroundColor: error ? theme.colors.errorContainer : theme.colors.elevation.level0,
+          }}
+          labelStyle={{
+            color: error ? theme.colors.onErrorContainer : theme.colors.primary,
+          }}
+          mode="elevated"
+          onPress={handleTakePfp}
+          disabled={loading}
+          style={{ marginTop: 8 }}
+        >
+          {loading ? <ActivityIndicator style={{ paddingTop: 5 }} /> : "From Camera"}
         </Button>
         {error && (
           <Text style={{ color: theme.colors.error, marginTop: 8 }}>

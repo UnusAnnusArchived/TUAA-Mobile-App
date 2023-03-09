@@ -30,7 +30,7 @@
     "moment": "^2.29.4",
     "moment-with-locales-es6": "^1.0.1",
     "npm": "^9.5.0",
-    "pocketbase": "^0.10.1",
+    "pocketbase": "^0.12.1",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-hook-form": "^7.43.1",

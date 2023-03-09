@@ -11,10 +11,12 @@
         "expo-image-picker",
         {
           "photosPermission": "This app will access your photos to select your profile picture.",
-          "cameraPermission": "This app will access your camera to take a photo for your profile picture."
+          "cameraPermission": "This app will access your camera to take a photo for your profile picture.",
+          "microphonePermission": "This app will access your camera to take a photo for your profile picture."
         }
       ]
     ],
+    "scheme": "tuaa",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "us.unusann.TUAA-Mobile-App"
