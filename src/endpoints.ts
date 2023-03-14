@@ -1,4 +1,4 @@
-export const cdn = "https://signer.unusann.us/ua-archive?key=";
+export const cdn = "https://stream.unusann.us";
 
 export const api = "https://unusann.us/api";
 

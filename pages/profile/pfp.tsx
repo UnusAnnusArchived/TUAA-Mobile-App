@@ -1,7 +1,3 @@
-// THIS IS NOT WORKING!
-// Uploading a profile picture causes the `avatar` value to get changed to an empty string.
-// Discussion: https://github.com/pocketbase/pocketbase/discussions/2002
-
 import { StackScreenProps } from "@react-navigation/stack";
 import { View } from "react-native";
 import { Button, Divider, Text, ActivityIndicator, useTheme } from "react-native-paper";
@@ -13,14 +9,17 @@ import { userAtom } from "../../src/atoms";
 import * as ImagePicker from "expo-image-picker";
 import pb from "../../src/pocketbase";
 import { Buffer } from "buffer";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { IUser, IUserAtom } from "../../src/types";
 import FormData from "form-data";
+import DeviceInfo from "react-native-device-info";
+import BottomSheet from "reanimated-bottom-sheet";
 
 const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = ({ navigation }) => {
   const [currentUser, setCurrentUser] = useRecoilState(userAtom);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const sheetRef = useRef<BottomSheet>(null);
   const theme = useTheme();
 
   const handleBack = () => {
@@ -31,10 +30,10 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
     setLoading(true);
     setError(false);
     try {
-      await ImagePicker.getMediaLibraryPermissionsAsync(false);
+      await ImagePicker.requestMediaLibraryPermissionsAsync(false);
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: false,
+        allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
         base64: false,
@@ -64,10 +63,10 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
     setLoading(true);
     setError(false);
     try {
-      await ImagePicker.getCameraPermissionsAsync();
+      await ImagePicker.requestCameraPermissionsAsync();
       let result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: false,
+        allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
         base64: false,
@@ -108,25 +107,13 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
             color: error ? theme.colors.onErrorContainer : theme.colors.primary,
           }}
           mode="elevated"
-          onPress={handlePickPfp}
+          onPress={() => {
+            sheetRef.current?.snapTo(450);
+          }}
           disabled={loading}
           style={{ marginTop: 8 }}
         >
           {loading ? <ActivityIndicator style={{ paddingTop: 5 }} /> : "Change Profile Picture"}
-        </Button>
-        <Button
-          contentStyle={{
-            backgroundColor: error ? theme.colors.errorContainer : theme.colors.elevation.level0,
-          }}
-          labelStyle={{
-            color: error ? theme.colors.onErrorContainer : theme.colors.primary,
-          }}
-          mode="elevated"
-          onPress={handleTakePfp}
-          disabled={loading}
-          style={{ marginTop: 8 }}
-        >
-          {loading ? <ActivityIndicator style={{ paddingTop: 5 }} /> : "From Camera"}
         </Button>
         {error && (
           <Text style={{ color: theme.colors.error, marginTop: 8 }}>
@@ -134,6 +121,7 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
           </Text>
         )}
       </View>
+      <BottomSheet ref={sheetRef} snapPoints={[450, 300, 0]} borderRadius={10} renderContent={() => <Text>hi</Text>} />
     </Layout>
   );
 };
