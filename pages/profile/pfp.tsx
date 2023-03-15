@@ -13,7 +13,7 @@ import { useRef, useState } from "react";
 import { IUser, IUserAtom } from "../../src/types";
 import FormData from "form-data";
 import DeviceInfo from "react-native-device-info";
-import BottomSheet from "reanimated-bottom-sheet";
+import BottomSheet from "react-native-raw-bottom-sheet";
 
 const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = ({ navigation }) => {
   const [currentUser, setCurrentUser] = useRecoilState(userAtom);
@@ -108,7 +108,7 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
           }}
           mode="elevated"
           onPress={() => {
-            sheetRef.current?.snapTo(450);
+            sheetRef.current?.open();
           }}
           disabled={loading}
           style={{ marginTop: 8 }}
@@ -121,7 +121,10 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
           </Text>
         )}
       </View>
-      <BottomSheet ref={sheetRef} snapPoints={[450, 300, 0]} borderRadius={10} renderContent={() => <Text>hi</Text>} />
+      {/* @ts-ignore TODO: create proper types for this library */}
+      <BottomSheet height={300} closeOnDragDown ref={sheetRef}>
+        <Text>hi</Text>
+      </BottomSheet>
     </Layout>
   );
 };

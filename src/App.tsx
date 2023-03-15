@@ -12,15 +12,15 @@ const Main: React.FC = () => {
   });
 
   return (
-    <RecoilRoot>
-      <ReactNativeRecoilPersistGate store={ReactNativeRecoilPersist}>
-        <RecoilNexus>
-          <PaperProvider>
+    <PaperProvider>
+      <RecoilRoot>
+        <ReactNativeRecoilPersistGate store={ReactNativeRecoilPersist}>
+          <RecoilNexus>
             <Router />
-          </PaperProvider>
-        </RecoilNexus>
-      </ReactNativeRecoilPersistGate>
-    </RecoilRoot>
+          </RecoilNexus>
+        </ReactNativeRecoilPersistGate>
+      </RecoilRoot>
+    </PaperProvider>
   );
 };
 
