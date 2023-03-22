@@ -1,6 +1,6 @@
 import { StackScreenProps } from "@react-navigation/stack";
 import { View } from "react-native";
-import { Button, Divider, Text, ActivityIndicator, useTheme } from "react-native-paper";
+import { Button, Divider, Text, ActivityIndicator, useTheme, List } from "react-native-paper";
 import { useRecoilState } from "recoil";
 import { ParamList } from ".";
 import Avatar from "../../components/avatar";
@@ -9,16 +9,17 @@ import { userAtom } from "../../src/atoms";
 import * as ImagePicker from "expo-image-picker";
 import pb from "../../src/pocketbase";
 import { Buffer } from "buffer";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IUser, IUserAtom } from "../../src/types";
 import FormData from "form-data";
-import DeviceInfo from "react-native-device-info";
+import DeviceInfo, { useIsEmulator } from "react-native-device-info";
 import BottomSheet from "react-native-raw-bottom-sheet";
 
 const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = ({ navigation }) => {
   const [currentUser, setCurrentUser] = useRecoilState(userAtom);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const isEmulator = useIsEmulator().result;
   const sheetRef = useRef<BottomSheet>(null);
   const theme = useTheme();
 
@@ -39,6 +40,7 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
         base64: false,
         exif: false,
       });
+      sheetRef.current?.close();
 
       if (!result.canceled && result.assets[0].uri) {
         const data = new FormData();
@@ -60,6 +62,9 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
   };
 
   const handleTakePfp = async () => {
+    if (isEmulator) {
+      return console.error("Camera not available on emulator/simulator!");
+    }
     setLoading(true);
     setError(false);
     try {
@@ -72,6 +77,7 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
         base64: false,
         exif: false,
       });
+      sheetRef.current?.close();
 
       if (!result.canceled && result.assets[0].uri) {
         const data = new FormData();
@@ -122,8 +128,38 @@ const ProfilePicture: React.FC<StackScreenProps<ParamList, "ProfilePicture">> = 
         )}
       </View>
       {/* @ts-ignore TODO: create proper types for this library */}
-      <BottomSheet height={300} closeOnDragDown ref={sheetRef}>
-        <Text>hi</Text>
+      <BottomSheet
+        height={200}
+        closeOnDragDown
+        customStyles={{
+          draggableIcon: { backgroundColor: theme.colors.onSurfaceVariant },
+          container: { backgroundColor: theme.colors.elevation.level1 },
+        }}
+        ref={sheetRef}
+      >
+        <View style={{ padding: 12 }}>
+          <Text variant="titleSmall">Change Profile Picture With</Text>
+          <List.Section>
+            <List.Item
+              style={{ padding: 8 }}
+              titleStyle={{ color: isEmulator ? theme.colors.onSurfaceDisabled : theme.colors.onSurface }}
+              left={() => <List.Icon color={isEmulator ? theme.colors.onSurfaceDisabled : undefined} icon="camera" />}
+              right={() => (
+                <List.Icon color={isEmulator ? theme.colors.onSurfaceDisabled : undefined} icon="menu-right" />
+              )}
+              title="Camera"
+              onPress={handleTakePfp}
+            />
+            <Divider />
+            <List.Item
+              style={{ padding: 8 }}
+              left={() => <List.Icon icon="image-multiple" />}
+              right={() => <List.Icon icon="menu-right" />}
+              title="Photo Library"
+              onPress={handlePickPfp}
+            />
+          </List.Section>
+        </View>
       </BottomSheet>
     </Layout>
   );

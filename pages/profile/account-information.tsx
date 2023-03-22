@@ -1,19 +1,26 @@
 import { StackScreenProps } from "@react-navigation/stack";
 import { useWindowDimensions, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { DataTable, Text } from "react-native-paper";
+import { Button, DataTable, Dialog, Portal, Text } from "react-native-paper";
 import { useRecoilState } from "recoil";
 import { ParamList } from ".";
 import Layout from "../../components/layout";
 import { userAtom } from "../../src/atoms";
 import moment from "moment-with-locales-es6";
+import { useState } from "react";
+import JSONData from "../../components/profile-json-data";
 
 const AccountInformation: React.FC<StackScreenProps<ParamList, "AccountInformation">> = ({ navigation }) => {
+  const [showJSONDialog, setShowJSONDialog] = useState(false);
   const [currentUser] = useRecoilState(userAtom);
   const dimensions = useWindowDimensions();
 
   const handleBack = () => {
     navigation.goBack();
+  };
+
+  const showJSONData = () => {
+    setShowJSONDialog(true);
   };
 
   return (
@@ -52,7 +59,11 @@ const AccountInformation: React.FC<StackScreenProps<ParamList, "AccountInformati
             )}
           </DataTable>
         </ScrollView>
+        <Button mode="contained" style={{ marginTop: 8 }} onPress={showJSONData}>
+          View Raw Profile Data
+        </Button>
       </ScrollView>
+      <JSONData show={showJSONDialog} setShow={setShowJSONDialog} />
     </Layout>
   );
 };

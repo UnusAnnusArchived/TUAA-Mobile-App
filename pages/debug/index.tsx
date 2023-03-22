@@ -1,9 +1,11 @@
-import { ScrollView } from "react-native";
-import { Divider, Surface, Text } from "react-native-paper";
+import { ScrollView, View } from "react-native";
+import { Button, Divider, Surface, Text } from "react-native-paper";
 import Comment from "../../components/comment";
 import Layout from "../../components/layout";
 import useDeviceType from "../../src/tools/useDeviceType";
 import type { IComment, IPageInfo } from "../../src/types";
+import pb from "../../src/pocketbase";
+import { useState } from "react";
 
 const markdownTestComment: IComment = {
   collectionId: "c374lpcmdsvqwim",
@@ -67,11 +69,24 @@ this&nbsp;is&nbsp;separated&nbsp;by&nbsp;html&nbsp;entities`,
 
 const Profile: React.FC = () => {
   const deviceType = useDeviceType();
+  const [refreshText, setRefreshText] = useState("Refresh User Authentication");
+
+  const handleRefreshUser = () => {
+    setRefreshText("Resetting...");
+    pb.collection("users").authRefresh();
+    setRefreshText("Finished Resetting");
+    setTimeout(() => {
+      setRefreshText("Refresh User Authentication");
+    }, 2000);
+  };
 
   return (
     <Layout title={pageInfo.title}>
       <ScrollView>
         <Text>Device Type: {deviceType}</Text>
+        <Button style={{}} mode="contained" onPress={handleRefreshUser}>
+          {refreshText}
+        </Button>
         <Surface style={{ margin: 16, padding: 16 }}>
           <Comment
             comment={markdownTestComment}

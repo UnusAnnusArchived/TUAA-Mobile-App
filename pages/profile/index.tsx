@@ -1,4 +1,4 @@
-import { Button, Divider, IconButton, List, Surface, Text } from "react-native-paper";
+import { Button, Divider, IconButton, List, Surface, Text, useTheme } from "react-native-paper";
 import Layout from "../../components/layout";
 import { IPageInfo, IUser } from "../../src/types";
 import pb from "../../src/pocketbase";
@@ -13,6 +13,8 @@ import ProfilePicture from "./pfp";
 import EmailPreferences from "./email-preferences";
 import AccountInformation from "./account-information";
 import AccountActions from "./actions";
+import DeleteAccountDialog from "../../components/delete-account-dialog";
+import { useState } from "react";
 
 export type ParamList = {
   Profile: undefined;
@@ -41,7 +43,17 @@ const ProfileRouter: React.FC = () => {
 export default ProfileRouter;
 
 const Profile: React.FC<StackScreenProps<ParamList, "Profile">> = ({ navigation }) => {
+  const [showDeleteAccountDialog, setShowDeleteAccountDialog] = useState(false);
   const [user, setUser] = useRecoilState(userAtom);
+  const theme = useTheme();
+
+  const handleLogout = async () => {
+    pb.authStore.clear();
+  };
+
+  const handleShowDeleteAccountDialog = () => {
+    setShowDeleteAccountDialog(true);
+  };
 
   return (
     <Layout title={pageInfo.title}>
@@ -91,8 +103,28 @@ const Profile: React.FC<StackScreenProps<ParamList, "Profile">> = ({ navigation 
               }}
             />
           </Surface>
+          <Surface elevation={2} style={{ marginTop: 32, paddingVertical: 4 }}>
+            <List.Item
+              style={{ padding: 16 }}
+              left={() => <List.Icon icon="logout" />}
+              title="Logout"
+              description="Logout of your account"
+              onPress={handleLogout}
+            />
+            <Divider />
+            <List.Item
+              style={{ padding: 16 }}
+              titleStyle={{ color: theme.colors.error }}
+              descriptionStyle={{ color: theme.colors.error }}
+              left={() => <List.Icon color={theme.colors.error} icon="delete" />}
+              title="Delete"
+              description="Delete your account"
+              onPress={handleShowDeleteAccountDialog}
+            />
+          </Surface>
         </Surface>
       </ScrollView>
+      <DeleteAccountDialog open={showDeleteAccountDialog} setOpen={setShowDeleteAccountDialog} />
     </Layout>
   );
 };

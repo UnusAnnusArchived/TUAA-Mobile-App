@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import Layout from "../../components/layout";
 import { IPageInfo } from "../../src/types";
 import pb from "../../src/pocketbase";
 import { ActivityIndicator, Button, HelperText, TextInput } from "react-native-paper";
-import { KeyboardAvoidingView, View } from "react-native";
+import { KeyboardAvoidingView, View, TextInput as RNTextInput } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { ParamList } from "../login";
 import { emailReg, nameReg, passwordReg, usernameReg } from "../../src/tools/regex";
@@ -15,14 +15,19 @@ const Register: React.FC<StackScreenProps<ParamList, "Register">> = ({ navigatio
   const [formValid, setFormValid] = useState(false);
   const [email, setEmail] = useState(route.params.initialEmail);
   const [emailValid, setEmailValid] = useState(true);
+  const emailRef = useRef<RNTextInput>(null);
   const [name, setName] = useState("");
   const [nameValid, setNameValid] = useState(true);
+  const nameRef = useRef<RNTextInput>(null);
   const [username, setUsername] = useState(route.params.initialUsername);
   const [usernameValid, setUsernameValid] = useState(true);
+  const usernameRef = useRef<RNTextInput>(null);
   const [password, setPassword] = useState(route.params.initialPassword);
   const [passwordValid, setPasswordValid] = useState(true);
+  const passwordRef = useRef<RNTextInput>(null);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordValid, setConfirmPasswordValid] = useState(true);
+  const confirmPasswordRef = useRef<RNTextInput>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<any>();
   const [showCreatedSnackbar, setShowCreatedSnackbar] = useState(false);
@@ -78,39 +83,41 @@ const Register: React.FC<StackScreenProps<ParamList, "Register">> = ({ navigatio
   };
 
   const handleSubmit = async () => {
-    try {
-      setLoading(true);
-      await pb.collection("users").create({
-        email,
-        name,
-        username,
-        password,
-        passwordConfirm: confirmPassword,
-        emails_account: true,
-        emails_updates: false,
-      });
-      setShowCreatedSnackbar(true);
-      await pb.collection("users").authWithPassword(username, password);
-      setLoading(false);
-    } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2));
-      setError(err);
-      setShowErrorSnackbar(true);
-      setLoading(false);
-      if (err?.data?.data?.email) {
-        setEmailValid(false);
-      }
-      if (err?.data?.data?.name) {
-        setNameValid(false);
-      }
-      if (err?.data?.data?.username) {
-        setUsernameValid(false);
-      }
-      if (err?.data?.data?.password) {
-        setPasswordValid(false);
-      }
-      if (err?.data?.data?.passwordConfirm) {
-        setPasswordValid(false);
+    if (formValid && !loading) {
+      try {
+        setLoading(true);
+        await pb.collection("users").create({
+          email,
+          name,
+          username,
+          password,
+          passwordConfirm: confirmPassword,
+          emails_account: true,
+          emails_updates: false,
+        });
+        setShowCreatedSnackbar(true);
+        await pb.collection("users").authWithPassword(username, password);
+        setLoading(false);
+      } catch (err: any) {
+        console.error(JSON.stringify(err, null, 2));
+        setError(err);
+        setShowErrorSnackbar(true);
+        setLoading(false);
+        if (err?.data?.data?.email) {
+          setEmailValid(false);
+        }
+        if (err?.data?.data?.name) {
+          setNameValid(false);
+        }
+        if (err?.data?.data?.username) {
+          setUsernameValid(false);
+        }
+        if (err?.data?.data?.password) {
+          setPasswordValid(false);
+        }
+        if (err?.data?.data?.passwordConfirm) {
+          setPasswordValid(false);
+        }
       }
     }
   };
@@ -130,31 +137,61 @@ const Register: React.FC<StackScreenProps<ParamList, "Register">> = ({ navigatio
           keyboardDismissMode="interactive"
         >
           <TextInput
+            autoComplete="email"
+            autoCorrect={false}
+            ref={emailRef}
             disabled={loading}
             error={!emailValid}
             keyboardType="email-address"
+            autoCapitalize="none"
             label="Email"
             value={email}
             onChangeText={handleEmailChange}
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              nameRef.current?.focus();
+            }}
           />
           <HelperText type="error" visible={error?.data?.data?.email?.message}>
             {error?.data?.data?.email?.message}
           </HelperText>
-          <TextInput disabled={loading} error={!nameValid} label="Name" value={name} onChangeText={handleNameChange} />
+          <TextInput
+            autoComplete="name-given"
+            ref={nameRef}
+            disabled={loading}
+            error={!nameValid}
+            label="Name"
+            value={name}
+            onChangeText={handleNameChange}
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              usernameRef.current?.focus();
+            }}
+          />
           <HelperText type="error" visible={error?.data?.data?.name?.message}>
             {error?.data?.data?.name?.message}
           </HelperText>
           <TextInput
+            autoComplete="username"
+            autoCorrect={false}
+            ref={usernameRef}
             disabled={loading}
             error={!usernameValid}
             label="Username"
             value={username}
             onChangeText={handleUsernameChange}
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              passwordRef.current?.focus();
+            }}
           />
           <HelperText type="error" visible={error?.data?.data?.username?.message}>
             {error?.data?.data?.username?.message}
           </HelperText>
           <TextInput
+            autoComplete="password"
+            autoCorrect={false}
+            ref={passwordRef}
             disabled={loading}
             error={!passwordValid}
             keyboardType="default"
@@ -163,11 +200,18 @@ const Register: React.FC<StackScreenProps<ParamList, "Register">> = ({ navigatio
             value={password}
             onChangeText={handlePasswordChange}
             right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={handleShowPassword} />}
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              confirmPasswordRef.current?.focus();
+            }}
           />
           <HelperText type="error" visible={error?.data?.data?.password?.message}>
             {error?.data?.data?.password?.message}
           </HelperText>
           <TextInput
+            autoComplete="password"
+            autoCorrect={false}
+            ref={confirmPasswordRef}
             disabled={loading}
             error={!confirmPasswordValid}
             keyboardType="default"
@@ -176,6 +220,8 @@ const Register: React.FC<StackScreenProps<ParamList, "Register">> = ({ navigatio
             value={confirmPassword}
             onChangeText={handleConfirmPasswordChange}
             right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={handleShowPassword} />}
+            returnKeyType="go"
+            onSubmitEditing={handleSubmit}
           />
           <HelperText type="error" visible={error?.data?.data?.passwordConfirm?.message}>
             {error?.data?.data?.passwordConfirm?.message}

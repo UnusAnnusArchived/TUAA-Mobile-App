@@ -18,11 +18,25 @@
     ],
     "scheme": "tuaa",
     "ios": {
+      "icon": "assets/icons/icon.png",
       "supportsTablet": true,
       "bundleIdentifier": "us.unusann.TUAA-Mobile-App"
     },
     "android": {
-      "package": "us.unusann.tuaa_mobile_app"
+      "icon": "assets/icons/icon.png",
+      "adaptiveIcon": {
+        "backgroundImage": "assets/icons/android/background.png",
+        "foregroundImage": "assets/icons/android/foreground.png",
+        "monochromeImage": "assets/icons/android/monochrome.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "us.unusann.tuaa_mobile_app",
+      "permissions": ["CAMERA", "RECORD_AUDIO"]
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7b0d6fa2-b21f-47b0-b03a-445fab29a854"
+      }
     }
   }
 }
