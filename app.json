@@ -28,7 +28,7 @@
         "backgroundImage": "assets/icons/android/background.png",
         "foregroundImage": "assets/icons/android/foreground.png",
         "monochromeImage": "assets/icons/android/monochrome.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#1c1c1c"
       },
       "package": "us.unusann.tuaa_mobile_app",
       "permissions": ["CAMERA", "RECORD_AUDIO"]
