@@ -2,7 +2,7 @@
   "expo": {
     "name": "TUAA",
     "slug": "TUAA",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "userInterfaceStyle": "automatic",
     "assetBundlePatterns": ["**/*"],
     "orientation": "portrait",
@@ -20,7 +20,12 @@
     "ios": {
       "icon": "assets/icons/icon.png",
       "supportsTablet": true,
-      "bundleIdentifier": "us.unusann.TUAA-Mobile-App"
+      "bundleIdentifier": "us.unusann.TUAA-Mobile-App",
+      "infoPlist": {
+        "UISupportsDocumentBrowser": true,
+        "UIFileSharingEnabled": true,
+        "LSSupportsOpeningDocumentsInPlace": true
+      }
     },
     "android": {
       "icon": "assets/icons/icon.png",

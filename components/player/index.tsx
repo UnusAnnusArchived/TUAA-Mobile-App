@@ -4,6 +4,7 @@ import { AVPlaybackStatus, AVPlaybackStatusError, AVPlaybackStatusSuccess, Video
 import { useRef, useState } from "react";
 import { cdn } from "../../src/endpoints";
 import VideoControls from "./controls";
+import { Button, Text } from "react-native-paper";
 
 interface IProps {
   episode: IEpisode;
@@ -17,6 +18,7 @@ const Player: React.FC<IProps> = ({ episode }) => {
   const handlePlaybackStatusUpdate = (status: AVPlaybackStatus) => {
     if (status.isLoaded) {
       setState(status);
+      setError(undefined);
     } else {
       setError(status);
     }
@@ -32,8 +34,24 @@ const Player: React.FC<IProps> = ({ episode }) => {
         onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
         style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
         videoStyle={{ width: "100%", height: "100%" }}
+        source={{ uri: `${cdn}${episode.sources?.[0]?.src}` }}
       />
-      <VideoControls episode={episode} video={video} state={state} />
+      {error ? (
+        <View style={{ justifyContent: "center", alignItems: "center", height: "100%" }}>
+          <Text variant="titleMedium">There has been an eror loading your video!</Text>
+          <Text>{error.error}</Text>
+          <Button
+            mode="contained"
+            onPress={() => {
+              setError(undefined);
+            }}
+          >
+            Retry
+          </Button>
+        </View>
+      ) : (
+        <VideoControls episode={episode} video={video} state={state} />
+      )}
     </View>
   );
 };

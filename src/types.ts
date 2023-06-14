@@ -1,6 +1,5 @@
-import { Admin, Record } from "pocketbase";
-import { Animated, StyleProp, ViewStyle } from "react-native";
-import { IconSource } from "react-native-paper/lib/typescript/components/Icon";
+import { Record } from "pocketbase";
+import { IconSource } from "react-native-paper/lib/typescript/src/components/Icon";
 
 export interface IPageInfo {
   key: string;
