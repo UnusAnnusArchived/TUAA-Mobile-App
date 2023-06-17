@@ -1,6 +1,6 @@
-import { Text, Button } from "react-native-paper";
+import { Text, Button, Surface } from "react-native-paper";
 import Layout from "../../components/layout";
-import type { IEpisode, IPageInfo } from "../../src/types";
+import { IDownloadQueue, type IEpisode, type IPageInfo } from "../../src/types";
 import { ScrollView } from "react-native";
 import * as fs from "expo-file-system";
 import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native";
@@ -9,13 +9,16 @@ import { StackScreenProps, createStackNavigator } from "@react-navigation/stack"
 import Watch from "../watch";
 import { ParamList } from "../home";
 import Episode from "../../components/episode";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRecoilState } from "recoil";
+import { downloadQueueAtom } from "../../src/atoms";
 
 // const handleDownloadTest = async () => {
 //   console.log("aaaaa1");
 //   try {
-//     const download = FileSystem.createDownloadResumable(
+//     const download = fs.createDownloadResumable(
 //       "https://download.unusann.us/01/001/2160.mp4",
-//       FileSystem.documentDirectory + "s01.e001.mp4",
+//       fs.documentDirectory + "s01.e001.mp4",
 //       {},
 //       (downloadProgress) => {
 //         const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
@@ -53,11 +56,13 @@ const DownloadsContainer: React.FC = () => {
 export default DownloadsContainer;
 
 const Downloads: React.FC<StackScreenProps<ParamList, "Videos">> = ({ navigation }) => {
+  const [downloadQueue, setDownloadQueue] = useRecoilState(downloadQueueAtom);
   const [downloadedEpisodes, setDownloadedEpisodes] = useState<IEpisode[]>([]);
 
   useEffect(() => {
     (async () => {
-      const dir = fs.documentDirectory + "metadata/";
+      //Fetch metadata
+      const dir = fs.documentDirectory + "Metadata/";
 
       if (!(await fs.getInfoAsync(dir)).exists) {
         await fs.makeDirectoryAsync(dir);
@@ -80,6 +85,11 @@ const Downloads: React.FC<StackScreenProps<ParamList, "Videos">> = ({ navigation
   return (
     <Layout title={pageInfo.title}>
       <ScrollView>
+        <Surface>
+          {downloadQueue.map((item, index) => {
+            return <Text>{item.episode.title}</Text>;
+          })}
+        </Surface>
         {downloadedEpisodes.map((episode, index) => {
           return <Episode key={index} episode={episode} navigation={navigation} />;
         })}

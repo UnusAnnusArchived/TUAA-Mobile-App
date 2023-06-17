@@ -54,6 +54,7 @@
     "react-native-skeleton-placeholder": "^5.2.4",
     "react-native-slider": "^0.11.0",
     "react-native-tab-view": "^3.3.4",
+    "react-native-uuid": "^2.0.1",
     "react-native-web": "~0.18.11",
     "recoil": "^0.7.6",
     "recoil-nexus": "^0.4.0",

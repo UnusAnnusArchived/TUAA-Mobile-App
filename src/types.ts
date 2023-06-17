@@ -1,3 +1,4 @@
+import { DownloadPauseState } from "expo-file-system";
 import { Record } from "pocketbase";
 import { IconSource } from "react-native-paper/lib/typescript/src/components/Icon";
 
@@ -76,4 +77,26 @@ export type ISortType = "latest" | "oldest";
 export interface IUserAtom {
   token: string | null;
   model: IUser | null;
+}
+
+export interface IDownloadedEpisode {
+  __downloadedMetadataVersion: 1;
+  downloadUuids: string[];
+  isDownloaded: true;
+  season: number;
+  episode: number;
+  title: string;
+  description: string;
+  date: number;
+  duration?: number;
+  downloadedSource: string;
+  downloadedPoster: string;
+  downloadedTracks: ITrack[];
+}
+
+export type IDownloadQueue = IDownloadQueueItem[];
+
+export interface IDownloadQueueItem {
+  downloadUuid: string;
+  status: DownloadPauseState;
 }
