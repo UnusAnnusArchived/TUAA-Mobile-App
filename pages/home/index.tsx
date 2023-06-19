@@ -9,12 +9,12 @@ import Layout from "../../components/layout";
 import SeasonView from "../../components/season-view";
 import { api } from "../../src/endpoints";
 import getPathSegment from "../../src/tools/getPathSegment";
-import type { IEpisode, IPageInfo } from "../../src/types";
+import type { IDownloadedEpisode, IEpisode, IPageInfo } from "../../src/types";
 import Watch from "../watch";
 
 export type ParamList = {
   Videos: undefined;
-  Watch: { episode?: IEpisode };
+  Watch: { episode?: IEpisode | IDownloadedEpisode };
 };
 
 const Stack = createStackNavigator<ParamList>();

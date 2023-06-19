@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { IEpisode, ISource } from "../../src/types";
+import { IDownloadedEpisode, IEpisode, ISource } from "../../src/types";
 import { AVPlaybackStatus, AVPlaybackStatusError, AVPlaybackStatusSuccess, Video } from "expo-av";
 import { useRef, useState } from "react";
 import { cdn } from "../../src/endpoints";
@@ -7,7 +7,7 @@ import VideoControls from "./controls";
 import { Button, Text } from "react-native-paper";
 
 interface IProps {
-  episode: IEpisode;
+  episode: IEpisode | IDownloadedEpisode;
 }
 
 const Player: React.FC<IProps> = ({ episode }) => {
@@ -34,7 +34,17 @@ const Player: React.FC<IProps> = ({ episode }) => {
         onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
         style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
         videoStyle={{ width: "100%", height: "100%" }}
-        source={{ uri: `${cdn}${episode.sources?.[0]?.src}` }}
+        source={{
+          uri: `${cdn}${
+            "sources" in episode
+              ? episode.sources?.[0]?.src
+              : "video" in episode
+              ? episode.video
+              : "downloadedSource" in episode
+              ? episode.downloadedSource
+              : undefined
+          }`,
+        }}
       />
       {error ? (
         <View style={{ justifyContent: "center", alignItems: "center", height: "100%" }}>

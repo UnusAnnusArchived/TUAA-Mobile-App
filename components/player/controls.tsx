@@ -2,13 +2,13 @@ import { Slider } from "@miblanchard/react-native-slider";
 import { AVPlaybackStatus, AVPlaybackStatusSuccess, Video } from "expo-av";
 import { Animated, View } from "react-native";
 import { ActivityIndicator, IconButton, Text, useTheme } from "react-native-paper";
-import { IEpisode } from "../../src/types";
+import { IDownloadedEpisode, IEpisode } from "../../src/types";
 import { useRef, useState } from "react";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { SliderOnChangeCallback } from "@miblanchard/react-native-slider/lib/types";
 
 interface IProps {
-  episode: IEpisode;
+  episode: IEpisode | IDownloadedEpisode;
   video: React.MutableRefObject<Video | null>;
   state?: AVPlaybackStatusSuccess;
 }

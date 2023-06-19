@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Surface, Text, useTheme } from "react-native-paper";
-import { IComment, IEpisode, ISortType } from "../../src/types";
+import { IComment, IDownloadedEpisode, IEpisode, ISortType } from "../../src/types";
 import pb from "../../src/pocketbase";
 import Comment from "../comment";
 import useSWR from "swr";
@@ -9,7 +9,7 @@ import DropDown from "react-native-paper-dropdown";
 import { View } from "react-native";
 
 interface IProps {
-  episode: IEpisode;
+  episode: IEpisode | IDownloadedEpisode;
 }
 
 const VideoComments: React.FC<IProps> = ({ episode }) => {

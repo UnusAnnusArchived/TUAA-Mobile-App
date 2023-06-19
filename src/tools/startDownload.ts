@@ -9,19 +9,19 @@ import getEpisodeID from "./getEpisodeID";
 const startDownload = async (episode: IEpisode, queue: IDownloadQueue, setQueue: SetterOrUpdater<IDownloadQueue>) => {
   let uuids: string[] = [];
 
-  await checkAndMakeDir(`${fs.documentDirectory}Season ${episode.season}/`);
-  await checkAndMakeDir(`${fs.documentDirectory}Season ${episode.season}/Episode ${episode.episode}/`);
+  let newQueue = [...queue];
 
-  const episodeDir = `${fs.documentDirectory}Season ${episode.season}/Episode ${episode.episode}`;
+  const episodeDir = `${fs.documentDirectory}Season%20${episode.season}/Episode%20${episode.episode}/`;
+  await checkAndMakeDir(episodeDir);
 
   const source = fs.createDownloadResumable(
     `${downloadUrl}${episode.sources?.[0]?.src ?? episode.video}`,
     `${episodeDir}/Video.mp4`
   );
 
-  console.log(source.fileUri);
+  source.downloadAsync();
 
-  queue.push({
+  newQueue.push({
     downloadUuid: uuids[uuids.push(uuid.v4() as string)],
     status: source.savable(),
   });
@@ -33,7 +33,9 @@ const startDownload = async (episode: IEpisode, queue: IDownloadQueue, setQueue:
         `${episodeDir}/${track.label}.${track.srclang}.vtt`
       );
 
-      queue.push({
+      trackDl.downloadAsync();
+
+      newQueue.push({
         downloadUuid: uuids[uuids.push(uuid.v4() as string)],
         status: trackDl.savable(),
       });
@@ -49,12 +51,14 @@ const startDownload = async (episode: IEpisode, queue: IDownloadQueue, setQueue:
     `${episodeDir}/Poster.jpg`
   );
 
-  queue.push({
+  poster.downloadAsync();
+
+  newQueue.push({
     downloadUuid: uuids[uuids.push(uuid.v4() as string)],
     status: poster.savable(),
   });
 
-  setQueue(queue);
+  setQueue(newQueue);
 
   const metadata: IDownloadedEpisode = {
     __downloadedMetadataVersion: 1,
@@ -80,6 +84,8 @@ const startDownload = async (episode: IEpisode, queue: IDownloadQueue, setQueue:
     }),
   };
 
+  console.log(metadata);
+
   checkAndMakeDir(`${fs.documentDirectory}Metadata`);
 
   fs.writeAsStringAsync(
@@ -89,10 +95,8 @@ const startDownload = async (episode: IEpisode, queue: IDownloadQueue, setQueue:
 };
 
 const checkAndMakeDir = async (dir: string) => {
-  console.log(dir);
   if (!(await fs.getInfoAsync(dir)).exists) {
-    console.log("doesnt exist");
-    await fs.makeDirectoryAsync(dir);
+    await fs.makeDirectoryAsync(dir, { intermediates: true });
   }
 };
 

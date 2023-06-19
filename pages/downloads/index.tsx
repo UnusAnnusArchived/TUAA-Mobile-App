@@ -1,6 +1,6 @@
 import { Text, Button, Surface } from "react-native-paper";
 import Layout from "../../components/layout";
-import { IDownloadQueue, type IEpisode, type IPageInfo } from "../../src/types";
+import { IDownloadQueue, IDownloadedEpisode, type IEpisode, type IPageInfo } from "../../src/types";
 import { ScrollView } from "react-native";
 import * as fs from "expo-file-system";
 import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native";
@@ -57,7 +57,7 @@ export default DownloadsContainer;
 
 const Downloads: React.FC<StackScreenProps<ParamList, "Videos">> = ({ navigation }) => {
   const [downloadQueue, setDownloadQueue] = useRecoilState(downloadQueueAtom);
-  const [downloadedEpisodes, setDownloadedEpisodes] = useState<IEpisode[]>([]);
+  const [downloadedEpisodes, setDownloadedEpisodes] = useState<IDownloadedEpisode[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -70,10 +70,10 @@ const Downloads: React.FC<StackScreenProps<ParamList, "Videos">> = ({ navigation
 
       const metadataDir = await fs.readDirectoryAsync(dir);
 
-      let episodes: IEpisode[] = [];
+      let episodes: IDownloadedEpisode[] = [];
       for (let i = 0; i < metadataDir.length; i++) {
         if (metadataDir[i].endsWith(".json")) {
-          const episode: IEpisode = JSON.parse(await fs.readAsStringAsync(dir + metadataDir[i]));
+          const episode: IDownloadedEpisode = JSON.parse(await fs.readAsStringAsync(dir + metadataDir[i]));
           episodes.push(episode);
         }
       }
@@ -87,7 +87,12 @@ const Downloads: React.FC<StackScreenProps<ParamList, "Videos">> = ({ navigation
       <ScrollView>
         <Surface>
           {downloadQueue.map((item, index) => {
-            return <Text>{item.episode.title}</Text>;
+            return (
+              <Text>
+                {downloadedEpisodes.find((episode) => episode.downloadUuids.includes(item.downloadUuid))?.title ??
+                  "Error"}
+              </Text>
+            );
           })}
         </Surface>
         {downloadedEpisodes.map((episode, index) => {

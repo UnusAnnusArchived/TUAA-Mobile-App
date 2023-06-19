@@ -1,6 +1,6 @@
 import { Card, Text, useTheme } from "react-native-paper";
 import { cdn } from "../../src/endpoints";
-import { IEpisode } from "../../src/types";
+import { IDownloadedEpisode, IEpisode } from "../../src/types";
 import moment from "moment-with-locales-es6";
 import React from "react";
 import { Image, useWindowDimensions, View } from "react-native";
@@ -11,7 +11,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamList } from "../../pages/home";
 
 interface IProps {
-  episode: IEpisode;
+  episode: IEpisode | IDownloadedEpisode;
   navigation: StackNavigationProp<ParamList, "Videos">;
 }
 
@@ -34,13 +34,26 @@ const Episode: React.FC<IProps> = ({ episode, navigation }) => {
         <Card.Cover
           alt={`Thumbnail for episode ${episode.episode}`}
           style={{ backgroundColor: theme.colors.elevation.level2 }}
-          source={{ uri: `${cdn}${episode?.posters?.[0]?.src ?? episode?.thumbnail}`, width: 1280, height: 720 }}
+          source={{
+            uri: `${cdn}${
+              "posters" in episode
+                ? episode.posters![0]?.src
+                : "thumbnail" in episode
+                ? episode?.thumbnail
+                : "downloadedSource" in episode
+                ? episode.downloadedSource
+                : undefined
+            }`,
+            width: 1280,
+            height: 720,
+          }}
           accessibilityIgnoresInvertColors
         />
         <Card.Content style={{ marginTop: 16 }}>
           <Text variant="titleMedium">{episode.title}</Text>
           <Text>
-            Episode {episode.episode} - {moment(episode.date ?? episode.releasedate).format("DD. MMM YYYY")}
+            Episode {episode.episode} -{" "}
+            {moment("date" in episode ? episode.date : episode.releasedate).format("DD. MMM YYYY")}
           </Text>
         </Card.Content>
       </Card>
